@@ -1,0 +1,17 @@
+{
+  "name": "activecollab/qbo-wrapper",
+  "description": "Quickbooks online API wrapper",
+  "license": "MIT",
+  "require": {
+    "league/oauth1-client": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "ActiveCollab\\Quickbooks\\": "src/ActiveCollab/Quickbooks/"
+    }
+  }
+}
