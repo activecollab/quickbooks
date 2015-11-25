@@ -1,6 +1,10 @@
 <?php
 
-abstract class TestCase extends PHPUnit_Framework_TestCase
+namespace ActiveCollab\Quickbooks\Tests;
+
+use PHPUnit_Framework_TestCase;
+
+class TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * Get fixture for test mocking
