@@ -254,7 +254,7 @@ class DataService
             $entity = '\\ActiveCollab\\Quickbooks\\Data\\' . (isset($keys[0]) ? $keys[0] : null);
             $data = isset($values[0]) ? $values[0] : [];
 
-            return class_exists($entity) ? new $entity($data) : new Entity($data);
+            return class_exists($entity, false) ? new $entity($data) : new Entity($data);
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
             $body = $response->getBody();
