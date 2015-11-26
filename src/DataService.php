@@ -133,9 +133,9 @@ class DataService
      * 
      * @return string
      */
-    public function getEntityUrl()
+    public function getRequestUrl($slug)
     {
-        return $this->getApiUrl() . '/' . $this->entity;
+        return $this->getApiUrl() . '/company/' . $this->realmId .  '/' . $slug;
     }
 
     /**
@@ -146,7 +146,7 @@ class DataService
      */
     public function create($payload)
     {
-        return $this->request('POST', $this->getEntityUrl(), $payload);
+        return $this->request('POST', $this->getRequestUrl($this->entity), $payload);
     }
 
     /**
@@ -157,7 +157,7 @@ class DataService
      */
     public function read($id)
     {
-        $uri = $this->getEntityUrl() . '/' . $id;
+        $uri = $this->getRequestUrl($this->entity) . '/' . $id;
 
         return $this->request('GET', $uri);
     }
@@ -170,7 +170,7 @@ class DataService
      */
     public function update($payload)
     {
-        $uri = $this->getEntityUrl() . '?operation=update';
+        $uri = $this->getRequestUrl($this->entity) . '?operation=update';
 
         return $this->request('POST', $uri, $payload);
     }
@@ -183,7 +183,7 @@ class DataService
      */
     public function delete($payload)
     {
-        $uri = $this->getEntityUrl() . '?operation=delete';
+        $uri = $this->getRequestUrl($this->entity) . '?operation=delete';
 
         $this->request('POST', $uri, $payload);
 
@@ -202,7 +202,7 @@ class DataService
             $query = "select * from {$this->entity}";
         }
 
-        $uri = $this->getApiUrl() . '?query=' . $query;
+        $uri = $this->getRequestUrl('query') . '?query=' . urlencode($query);
 
         return $this->request('GET', $uri);
     }
