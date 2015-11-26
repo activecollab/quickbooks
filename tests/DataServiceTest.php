@@ -138,11 +138,11 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->once())
                         ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
+                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
 
         $mockServer->expects($this->once())
-                   ->method('protocolHeader')
-                   ->will($this->returnValue(''));
+                   ->method('getHeaders')
+                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
 
         $mockDataService->expects($this->once())
                         ->method('createHttpClient')
@@ -180,11 +180,11 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->once())
                         ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
+                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
 
         $mockServer->expects($this->once())
-                   ->method('protocolHeader')
-                   ->will($this->returnValue(''));
+                   ->method('getHeaders')
+                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
 
         $mockDataService->expects($this->once())
                         ->method('createHttpClient')
@@ -230,11 +230,11 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->any())
                         ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
+                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
 
         $mockServer->expects($this->any())
-                   ->method('protocolHeader')
-                   ->will($this->returnValue(''));
+                   ->method('getHeaders')
+                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
 
         $headers = $mockDataService->getHeaders('GET', 'http://www.example.com');
 
@@ -274,10 +274,18 @@ class DataServiceTest extends TestCase
      */
     public function getTestHeaders()
     {
-        return [
+        $headers = $this->getMockAuthorizationHeaders();
+
+        return array_merge($headers, [
             'Accept'        => 'application/json',
             'Content-Type'  => 'application/json',
-            'Authorization' => ''
+        ]);
+    }
+
+    protected function getMockAuthorizationHeaders()
+    {
+        return [
+            'Authorization' => '',
         ];
     }
 }

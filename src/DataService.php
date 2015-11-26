@@ -28,6 +28,15 @@ class DataService
      */
     protected $entity = '';
 
+    /**
+     * Construct data service
+     * 
+     * @param string $consumer_key
+     * @param string $consumer_key_secret
+     * @param string $access_token
+     * @param string $access_token_secret
+     * @param string $realmId
+     */
     public function __construct($consumer_key, $consumer_key_secret, $access_token, $access_token_secret, $realmId)
     {
         $this->consumer_key = $consumer_key;
@@ -37,25 +46,45 @@ class DataService
         $this->realmId = $realmId;
     } 
 
+    /**
+     * Return api url
+     * 
+     * @return string
+     */
     public function getApiUrl()
     {
         return 'https://quickbooks.api.intuit.com/v'.self::API_VERSION;
     }
 
+    /**
+     * Return http client
+     * 
+     * @return GuzzleClient
+     */
     public function createHttpClient()
     {
         return new GuzzleClient();
     }
 
+    /**
+     * Return oauth server
+     * 
+     * @return Quickbooks
+     */
     public function createServer()
     {
         $client_credentials = new ClientCredentials();
         $client_credentials->setIdentifier($this->consumer_key);
         $client_credentials->setSecret($this->consumer_key_secret);
-        
+
         return new Quickbooks($client_credentials);
     }
 
+    /**
+     * Return token credentials
+     * 
+     * @return TokenCredentials
+     */
     public function getTokenCredentials()
     {
         $tokenCredentials = new TokenCredentials();
@@ -65,6 +94,11 @@ class DataService
         return $tokenCredentials;
     }
 
+    /**
+     * Set user agent
+     * 
+     * @param string|null $user_agent
+     */
     public function setUserAgent($user_agent = null)
     {
         $this->user_agent = $user_agent;
@@ -72,11 +106,21 @@ class DataService
         return $this;
     }
 
+    /**
+     * Return user agent
+     * 
+     * @return string
+     */
     public function getUserAgent()
     {
         return $this->user_agent;
     }
 
+    /**
+     * Set entity
+     * 
+     * @param string $entity
+     */
     public function setEntity($entity)
     {
         $this->entity = $entity;
@@ -84,16 +128,33 @@ class DataService
         return $this;
     }
 
+    /**
+     * Return entity url
+     * 
+     * @return string
+     */
     public function getEntityUrl()
     {
         return $this->getApiUrl() . '/' . $this->entity;
     }
 
+    /**
+     * Send create request
+     * 
+     * @param  array|string     $payload
+     * @return Entity
+     */
     public function create($payload)
     {
         return $this->request('POST', $this->getEntityUrl(), $payload);
     }
 
+    /**
+     * Send read request
+     * 
+     * @param  int              $id
+     * @return Entity
+     */
     public function read($id)
     {
         $uri = $this->getEntityUrl() . '/' . $id;
@@ -101,6 +162,12 @@ class DataService
         return $this->request('GET', $uri);
     }
 
+    /**
+     * Send update request
+     * 
+     * @param  array|string     $payload
+     * @return Entity
+     */
     public function update($payload)
     {
         $uri = $this->getEntityUrl() . '?operation=update';
@@ -108,6 +175,12 @@ class DataService
         return $this->request('POST', $uri, $payload);
     }
 
+    /**
+     * Send delete request
+     * 
+     * @param  array            $payload
+     * @return null
+     */
     public function delete($payload)
     {
         $uri = $this->getEntityUrl() . '?operation=delete';
@@ -117,6 +190,12 @@ class DataService
         return null;
     }
 
+    /**
+     * Send query request
+     * 
+     * @param  string|null      $query
+     * @return QueryResponse
+     */
     public function query($query = null)
     {
         if ($query === null) {
@@ -128,15 +207,21 @@ class DataService
         return $this->request('GET', $uri);
     }
 
+    /**
+     * Return headers for request
+     * 
+     * @param  string           $method
+     * @param  string           $uri
+     * @return array
+     */
     public function getHeaders($method, $uri) 
     {
         $server = $this->createServer([ $this->consumer_key, $this->consumer_key_secret ]);
 
-        $headers = [
-            'Accept'        => 'application/json',
-            'Content-Type'  => 'application/json',
-            'Authorization' => $server->protocolHeader($method, $uri, $this->getTokenCredentials()),
-        ];
+        $headers = $server->getHeaders($this->getTokenCredentials(), $method, $uri);
+
+        $headers['Accept'] = 'application/json';
+        $headers['Content-Type'] = 'application/json';
 
         if (!empty($this->user_agent)) {
             $headers['User-Agent'] = $this->user_agent;
@@ -145,6 +230,15 @@ class DataService
         return $headers;
     }
 
+    /**
+     * Request
+     * 
+     * @param  string $method
+     * @param  string $uri
+     * @param  string|array      $body
+     * @return Entity|QueryResponse
+     * @throws \Exception
+     */
     public function request($method, $uri, $body = null)
     {   
         $client = $this->createHttpClient();
