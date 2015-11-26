@@ -12,7 +12,18 @@ $quickbooks = new ActiveCollab\Quickbooks\Quickbooks([
     'callback_uri'  => 'http://example.com'
 ]);
 ```
-    
+
+### Sandbox
+
+```php
+$sandbox = new ActiveCollab\Quickbooks\Sandbox(
+    'example-consumer-key',
+    'example-consumer-key-secret',
+    'example-access-token',
+    'example-access-token-secret',
+    'example-realmId'
+);
+```
     
 ### Querying API
    
@@ -25,3 +36,4 @@ $dataService = new ActiveCollab\Quickbooks\DataService(
     'example-realmId'
 );
 ```
+
