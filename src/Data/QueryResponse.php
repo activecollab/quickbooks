@@ -20,14 +20,11 @@ class QueryResponse implements \IteratorAggregate, \Countable, \JsonSerializable
      */
     public function __construct(array $data)
     {
-        $keys = array_keys($data);
         $values = array_values($data);
-
-        $entity = '\\ActiveCollab\\Quickbooks\\Data\\' . (isset($keys[0]) ? $keys[0] : null);
         $rows = isset($values[0]) && is_array($values[0]) ? $values[0] : [];
 
         foreach ($rows as $row) {
-            $this->entities[] = class_exists($entity, false) ? new $entity($row) : new Entity($row);
+            $this->entities[] = new Entity($row);
         }
     }
 

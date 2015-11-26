@@ -5,6 +5,7 @@ namespace ActiveCollab\Quickbooks;
 use ActiveCollab\Quickbooks\Quickbooks;
 use ActiveCollab\Quickbooks\Data\Entity;
 use Guzzle\Service\Client as GuzzleClient;
+use ActiveCollab\Quickbooks\Data\QueryResponse;
 use Guzzle\Http\Exception\BadResponseException;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\ClientCredentials;
@@ -251,10 +252,10 @@ class DataService
             $keys = array_keys($response);
             $values = array_values($response);
 
-            $entity = '\\ActiveCollab\\Quickbooks\\Data\\' . (isset($keys[0]) ? $keys[0] : null);
+            $is_query_response = isset($keys[0]) && $keys[0] == 'QueryResponse';
             $data = isset($values[0]) ? $values[0] : [];
 
-            return class_exists($entity, false) ? new $entity($data) : new Entity($data);
+            return $is_query_response ? new QueryResponse($data) : new Entity($data);
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
             $body = $response->getBody();
