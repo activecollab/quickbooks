@@ -2,11 +2,12 @@
 
 namespace ActiveCollab\Quickbooks;
 
+use ActiveCollab\Quickbooks\Quickbooks;
 use ActiveCollab\Quickbooks\Data\Entity;
 use Guzzle\Service\Client as GuzzleClient;
 use Guzzle\Http\Exception\BadResponseException;
 use League\OAuth1\Client\Credentials\TokenCredentials;
-use ActiveCollab\Quickbooks\Quickbooks;
+use League\OAuth1\Client\Credentials\ClientCredentials;
 
 class DataService
 {
@@ -46,8 +47,12 @@ class DataService
         return new GuzzleClient();
     }
 
-    public function createServer($client_credentials)
+    public function createServer()
     {
+        $client_credentials = new ClientCredentials();
+        $client_credentials->setIdentifier($this->consumer_key);
+        $client_credentials->setSecret($this->consumer_key_secret);
+        
         return new Quickbooks($client_credentials);
     }
 

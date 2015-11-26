@@ -60,14 +60,7 @@ class DataServiceTest extends TestCase
      */
     public function testCreateServer()
     {
-        $clientCredentials = new \League\OAuth1\Client\Credentials\ClientCredentials;
-        $clientCredentials->setIdentifier('consumer-key');
-        $clientCredentials->setSecret('consumer-key-secret');
-
-        $this->assertInstanceOf(
-            'ActiveCollab\Quickbooks\Quickbooks', 
-            $this->dataService->createServer($clientCredentials)
-        );
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Quickbooks', $this->dataService->createServer());
     }
 
     /**
@@ -145,7 +138,6 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->once())
                         ->method('createServer')
-                        ->with(['consumer-key', 'consumer-key-secret'])
                         ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
 
         $mockServer->expects($this->once())
@@ -188,7 +180,6 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->once())
                         ->method('createServer')
-                        ->with(['consumer-key', 'consumer-key-secret'])
                         ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
 
         $mockServer->expects($this->once())
@@ -239,7 +230,6 @@ class DataServiceTest extends TestCase
 
         $mockDataService->expects($this->any())
                         ->method('createServer')
-                        ->with([ 'consumer-key', 'consumer-key-secret' ])
                         ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'protocolHeader' ])));
 
         $mockServer->expects($this->any())
