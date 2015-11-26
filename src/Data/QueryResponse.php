@@ -27,7 +27,7 @@ class QueryResponse implements \IteratorAggregate, \Countable
         $rows = isset($values[0]) && is_array($values[0]) ? $values[0] : [];
 
         foreach ($rows as $row) {
-            $this->entities[] = class_exists($entity) ? new $entity($row) : new Entity($row);
+            $this->entities[] = class_exists($entity, false) ? new $entity($row) : new Entity($row);
         }
     }
 
