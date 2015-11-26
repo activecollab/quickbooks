@@ -7,11 +7,19 @@ use ActiveCollab\Quickbooks\Data\QueryResponse;
 
 class QueryResponseTest extends TestCase
 {
+
     /**
-     * Test result
+     * @var QueryResponse
      */
-    public function testResult()
+    protected $query_response;
+
+    /**
+     * Set up test environmeet
+     */
+    public function setUp()
     {
+        parent::setUp();
+
         $data = [
             'Invoice' => [
                 [ 'Id' => 1 ],
@@ -19,13 +27,43 @@ class QueryResponseTest extends TestCase
             ]
         ];
 
-        $queryResponse = new QueryResponse($data);
+        $this->query_response = new QueryResponse($data);
+        $this->assertInstanceOf(QueryResponse::class, $this->query_response);
+    }
 
-        $this->assertInstanceOf(QueryResponse::class, $queryResponse);
-        $this->assertEquals(2, $queryResponse->count());
+    /**
+     * Tear down test environment
+     */
+    public function tearDown()
+    {
+        $this->query_response = null;
 
-        foreach ($queryResponse as $entity) {
+        parent::tearDown();
+    }
+
+    /**
+     * Test collected entities
+     */
+    public function testEntitiesCollection()
+    {
+        $this->assertEquals(2, $this->query_response->count());
+
+        foreach ($this->query_response as $entity) {
             $this->assertInstanceOf(Entity::class, $entity);
+        }
+    }
+
+    /**
+     * Test serialization
+     */
+    public function testSerialize()
+    {
+        $results = json_decode(json_encode($this->query_response), true);
+
+        $this->assertTrue(is_array($results));
+
+        foreach ($results as $result) {
+            $this->assertTrue(isset($result['Id']));
         }
     }
 }
