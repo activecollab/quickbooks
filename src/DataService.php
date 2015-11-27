@@ -136,7 +136,7 @@ class DataService
      */
     public function getRequestUrl($slug)
     {
-        return $this->getApiUrl() . '/company/' . $this->realmId .  '/' . $slug;
+        return $this->getApiUrl() . '/company/' . $this->realmId .  '/' . strtolower($slug);
     }
 
     /**
@@ -217,7 +217,7 @@ class DataService
      */
     public function getHeaders($method, $uri) 
     {
-        $server = $this->createServer([ $this->consumer_key, $this->consumer_key_secret ]);
+        $server = $this->createServer();
 
         $headers = $server->getHeaders($this->getTokenCredentials(), $method, $uri);
 
@@ -240,7 +240,7 @@ class DataService
      * @return Entity|QueryResponse
      * @throws \Exception
      */
-    public function request($method, $uri, $body = null)
+    public function request($method, $uri, array $body = null)
     {   
         $client = $this->createHttpClient();
 
