@@ -150,7 +150,7 @@ class DataServiceTest extends TestCase
 
         $mockHttpClient->expects($this->once())
                        ->method('createRequest')
-                       ->with('POST', 'http://www.example.com', $this->getTestHeaders(), [ 'Id' => 1 ])
+                       ->with('POST', 'http://www.example.com', $this->getTestHeaders(), json_encode([ 'Id' => 1 ]))
                        ->will($this->returnValue($request = $this->getMock('stdClass', [ 'send' ])));
 
         $request->expects($this->once())

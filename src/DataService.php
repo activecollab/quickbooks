@@ -246,6 +246,10 @@ class DataService
 
         $headers = $this->getHeaders($method, $uri);
 
+        if ($body !== null) {
+            $body = json_encode($body);
+        }
+
         try {
             $response = $client->createRequest($method, $uri, $headers, $body)->send()->json();
 
