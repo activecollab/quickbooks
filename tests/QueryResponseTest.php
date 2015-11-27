@@ -28,7 +28,7 @@ class QueryResponseTest extends TestCase
         ];
 
         $this->query_response = new QueryResponse($data);
-        $this->assertInstanceOf(QueryResponse::class, $this->query_response);
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Data\QueryResponse', $this->query_response);
     }
 
     /**
@@ -49,7 +49,7 @@ class QueryResponseTest extends TestCase
         $this->assertEquals(2, $this->query_response->count());
 
         foreach ($this->query_response as $entity) {
-            $this->assertInstanceOf(Entity::class, $entity);
+            $this->assertInstanceOf('ActiveCollab\Quickbooks\Data\Entity', $entity);
         }
     }
 

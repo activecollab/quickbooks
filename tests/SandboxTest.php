@@ -26,10 +26,7 @@ class SandboxTest extends TestCase
             'realm-id'
         );
 
-        $this->assertInstanceOf(
-            Sandbox::class,
-            $this->sandbox
-        );
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Sandbox', $this->sandbox);
     }
 
     /**

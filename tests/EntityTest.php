@@ -20,7 +20,7 @@ class EntityTest extends TestCase
 
         $this->entity = new Entity($this->getEntityTestData());
 
-        $this->assertInstanceOf(Entity::class, $this->entity);
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Data\Entity', $this->entity);
     }
 
     /**

@@ -26,7 +26,7 @@ class DataServiceTest extends TestCase
             'realm-id'
         );
 
-        $this->assertInstanceOf(DataService::class, $this->dataService);
+        $this->assertInstanceOf('Activecollab\Quickbooks\DataService', $this->dataService);
     }
 
     /**

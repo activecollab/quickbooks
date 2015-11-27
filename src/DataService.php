@@ -142,10 +142,10 @@ class DataService
     /**
      * Send create request
      * 
-     * @param  array|string     $payload
+     * @param  array            $payload
      * @return Entity
      */
-    public function create($payload)
+    public function create(array $payload)
     {
         return $this->request('POST', $this->getRequestUrl($this->entity), $payload);
     }
@@ -166,10 +166,10 @@ class DataService
     /**
      * Send update request
      * 
-     * @param  array|string     $payload
+     * @param  array            $payload
      * @return Entity
      */
-    public function update($payload)
+    public function update(array $payload)
     {
         $uri = $this->getRequestUrl($this->entity) . '?operation=update';
 
@@ -182,7 +182,7 @@ class DataService
      * @param  array            $payload
      * @return null
      */
-    public function delete($payload)
+    public function delete(array $payload)
     {
         $uri = $this->getRequestUrl($this->entity) . '?operation=delete';
 
