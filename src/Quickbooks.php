@@ -2,6 +2,7 @@
 
 namespace ActiveCollab\Quickbooks;
 
+use Guzzle\Http\Exception\BadResponseException;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Server\Server;
 use League\OAuth1\Client\Server\User;
@@ -28,14 +29,19 @@ class Quickbooks extends Server
         return 'https://appcenter.intuit.com/api/v1/user/current';
     }
 
+    public function urlConnection()
+    {
+        return 'https://appcenter.intuit.com/api/v1/connection';
+    }
+
     public function userDetails($data, TokenCredentials $tokenCredentials)
     {
-        $user = new User;
+        $user = new User();
 
         $user->firstName = (string) $data['User']['FirstName'];
-        $user->lastName  = (string) $data['User']['LastName'];
-        $user->name      = $user->firstName . ' ' . $user->lastName;
-        $user->email     = (string) $data['User']['EmailAddress'];
+        $user->lastName = (string) $data['User']['LastName'];
+        $user->name = $user->firstName . ' ' . $user->lastName;
+        $user->email = (string) $data['User']['EmailAddress'];
 
         $verified = filter_var((string) $data['User']['IsVerified'], FILTER_VALIDATE_BOOLEAN);
 
@@ -57,5 +63,52 @@ class Quickbooks extends Server
     public function userScreenName($data, TokenCredentials $tokenCredentials)
     {
         return;
+    }
+
+    /**
+     * Reconnect and return new access tokens.
+     * 
+     * @param  TokenCredentials     $tokenCredentials
+     * @return TokenCredentials
+     * @throws CredentialsException
+     */
+    public function reconnect(TokenCredentials $tokenCredentials)
+    {
+        $uri = $this->urlConnection() . '/reconnect';
+
+        $client = $this->createHttpClient();
+
+        $headers = $this->getHeaders($tokenCredentials, 'GET', $uri);
+
+        try {
+            $response = $client->get($uri, $headers)->send();
+        } catch (BadResponseException $e) {
+            return $this->handleTokenCredentialsBadResponse($e);
+        }
+
+        return $this->createTokenCredentials($response->getBody());
+    }
+
+    /**
+     * Disconnect from quickbooks
+     *
+     * @param  TokenCredentials     $tokenCredentials
+     * @return bool
+     */
+    public function disconnect(TokenCredentials $tokenCredentials)
+    {
+        $uri = $this->urlConnection() . '/disconnect';
+
+        $client = $this->createHttpClient();
+
+        $headers = $this->getHeaders($tokenCredentials, 'GET', $uri);
+
+        try {
+            $response = $client->get($uri, $headers)->send();
+        } catch (BadResponseException $e) {
+            throw new \Exception("Disconnection failed");
+        }
+
+        return true;
     }
 }
