@@ -141,55 +141,32 @@ class Quickbooks extends Server
     /**
      * Reconnect and return new access tokens.
      * 
-     * @param  TokenCredentials               $tokenCredentials
-     * @return TokenCredentials
-     * @throws CredentialsException|Exception
+     * @param  tokenCredentials     $tokenCredentials
+     * @return ConnectionResponse
      */
     public function reconnect(TokenCredentials $tokenCredentials)
     {
-        $response = $this->sendConnectionRequest($tokenCredentials, 'reconnect');
-
-        if ($response->getErrorCode()) {
-            throw new \Exception($response->getErrorMessage());
-        } else {
-            $oauth_token = $response->getOAuthToken();
-            $oauth_token_secret = $response->getOAuthTokenSecret();
-
-            if (!$oauth_token || !$oauth_token_secret) {
-                throw new CredentialsException('Error invalid token credentials.');
-            }
-
-            $tokenCredentials->setIdentifier($oauth_token);
-            $tokenCredentials->setSecret($oauth_token_secret);
-        }
-
-        return $tokenCredentials;
+        return $this->sendConnectionRequest($tokenCredentials, 'reconnect');
     }
 
     /**
      * Disconnect from quickbooks.
      *
-     * @param  TokenCredentials $tokenCredentials
-     * @return bool
-     * @throws Exception
+     * @param  TokenCredentials     $tokenCredentials
+     * @return ConnectionResponse
      */
     public function disconnect(TokenCredentials $tokenCredentials)
     {
-        $response = $this->sendConnectionRequest($tokenCredentials, 'disconnect');
-
-        if ($response->getErrorCode()) {
-            throw new \Exception($response->getErrorMessage());
-        }
-
-        return true;
+        return $this->sendConnectionRequest($tokenCredentials, 'disconnect');
     }
 
     /**
      * Send connection request.
      * 
-     * @param  TokenCredentials   $tokenCredentials
-     * @param  string             $action
+     * @param  TokenCredentials     $tokenCredentials
+     * @param  string               $action
      * @return ConnectionResponse
+     * @throws CredentialsException
      */
     public function sendConnectionRequest(TokenCredentials $tokenCredentials, $action)
     {

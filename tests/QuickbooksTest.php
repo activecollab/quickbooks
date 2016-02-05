@@ -127,6 +127,9 @@ class QuickbooksTest extends TestCase
         $this->assertEquals('application/json', $headers['Content-Type']);
     }
 
+    /**
+     * Test send connection request
+     */
     public function testSendConnectionRequest()
     {
         // mock server
@@ -202,12 +205,7 @@ class QuickbooksTest extends TestCase
      */
     public function testReconnect()
     {
-        $expectedResponse = [
-            'ErrorCode' => 0,
-            'ErrorMessage' => '',
-            'OAuthToken' => '12345',
-            'OAuthTokenSecret' => '54321',
-        ];
+        $expectedResponse = $this->mockConnectionResponse(0, '', '12345', '54321');
 
         // mock server
         $mockServer = $this->mockServer(['createHttpClient', 'getHeaders', 'urlConnection']);
@@ -234,45 +232,13 @@ class QuickbooksTest extends TestCase
                      ->method('json')
                      ->will($this->returnValue($expectedResponse));
 
-        $tokenCredentials = $mockServer->reconnect($this->getTokenCredentials());
-        $this->assertInstanceOf('League\OAuth1\Client\Credentials\TokenCredentials', $tokenCredentials);
-        $this->assertEquals($expectedResponse['OAuthToken'], $tokenCredentials->getIdentifier());
-        $this->assertEquals($expectedResponse['OAuthTokenSecret'], $tokenCredentials->getSecret());
-    }
-
-    /**
-     * @expectedException       \Exception
-     * expectedExceptionMessage OAuth Token Rejected
-     */
-    public function testErrorOnReconnect()
-    {
-        $expectedResult = $this->mockConnectionResponse(270, 'OAuth Token Rejected');
-
-        // mock server
-        $mockServer = $this->mockServer(['sendConnectionRequest']);
-        $mockServer->expects($this->once())
-                   ->method('sendConnectionRequest')
-                   ->with($this->getTokenCredentials(), 'reconnect')
-                   ->will($this->returnValue(new ConnectionResponse($expectedResult)));
-
-        $mockServer->reconnect($this->getTokenCredentials());
-    }
-
-    /**
-     * @expectedException League\OAuth1\Client\Credentials\CredentialsException
-     */
-    public function testErrorWhenInvalidTokenReceivedOnReconnect()
-    {
-        $expectedResult = $this->mockConnectionResponse(0, '');
-
-        // mock server
-        $mockServer = $this->mockServer(['sendConnectionRequest']);
-        $mockServer->expects($this->once())
-                   ->method('sendConnectionRequest')
-                   ->with($this->getTokenCredentials(), 'reconnect')
-                   ->will($this->returnValue(new ConnectionResponse($expectedResult)));
-
-        $mockServer->reconnect($this->getTokenCredentials());
+        $result = $mockServer->reconnect($this->getTokenCredentials());
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Data\ConnectionResponse', $result);
+        $this->assertEquals(false, $result->hasError());
+        $this->assertEquals($expectedResponse['ErrorCode'], $result->getErrorCode());
+        $this->assertEquals($expectedResponse['ErrorMessage'], $result->getErrorMessage());
+        $this->assertEquals($expectedResponse['OAuthToken'], $result->getOAuthToken());
+        $this->assertEquals($expectedResponse['OAuthTokenSecret'], $result->getOAuthTokenSecret());
     }
 
     /**
@@ -280,7 +246,6 @@ class QuickbooksTest extends TestCase
      */
     public function testDisconnect()
     {
-        $expect = true;
         $expectedResponse = $this->mockConnectionResponse(0);
 
         // mock server
@@ -308,24 +273,13 @@ class QuickbooksTest extends TestCase
                      ->method('json')
                      ->will($this->returnValue($expectedResponse));
 
-        $this->assertEquals($expect, $mockServer->disconnect($this->getTokenCredentials()));
-    }
-
-    /**
-     * @expectedException \Exception
-     */
-    public function testErrorOnDiconnect()
-    {
-        $expectedResult = $this->mockConnectionResponse(270, 'OAuth Token Rejected');
-
-        // mock server
-        $mockServer = $this->mockServer(['sendConnectionRequest']);
-        $mockServer->expects($this->once())
-                   ->method('sendConnectionRequest')
-                   ->with($this->getTokenCredentials(), 'disconnect')
-                   ->will($this->returnValue(new ConnectionResponse($expectedResult)));
-
-        $mockServer->disconnect($this->getTokenCredentials());
+        $result = $mockServer->disconnect($this->getTokenCredentials());
+        $this->assertInstanceOf('ActiveCollab\Quickbooks\Data\ConnectionResponse', $result);
+        $this->assertEquals(false, $result->hasError());
+        $this->assertEquals($expectedResponse['ErrorCode'], $result->getErrorCode());
+        $this->assertEquals($expectedResponse['ErrorMessage'], $result->getErrorMessage());
+        $this->assertEquals($expectedResponse['OAuthToken'], $result->getOAuthToken());
+        $this->assertEquals($expectedResponse['OAuthTokenSecret'], $result->getOAuthTokenSecret());
     }
 
     /**

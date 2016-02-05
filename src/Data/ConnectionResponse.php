@@ -77,4 +77,14 @@ class ConnectionResponse
     {
         return $this->oauth_token_secret;
     }
+
+    /**
+     * Return has error
+     * 
+     * @return bool
+     */
+    public function hasError()
+    {
+        return $this->getErrorCode() > 0;
+    }
 }
