@@ -9,6 +9,7 @@ use ActiveCollab\Quickbooks\Data\QueryResponse;
 use Guzzle\Http\Exception\BadResponseException;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\ClientCredentials;
+use DateTime;
 
 class DataService
 {
@@ -147,7 +148,9 @@ class DataService
      */
     public function create(array $payload)
     {
-        return $this->request('POST', $this->getRequestUrl($this->entity), $payload);
+        $response = $this->request('POST', $this->getRequestUrl($this->entity), $payload);
+
+        return new Entity($response);
     }
 
     /**
@@ -160,7 +163,9 @@ class DataService
     {
         $uri = $this->getRequestUrl($this->entity) . '/' . $id;
 
-        return $this->request('GET', $uri);
+        $response = $this->request('GET', $uri);
+
+        return new Entity($response[$this->entity]);
     }
 
     /**
@@ -173,7 +178,9 @@ class DataService
     {
         $uri = $this->getRequestUrl($this->entity) . '?operation=update';
 
-        return $this->request('POST', $uri, $payload);
+        $response = $this->request('POST', $uri, $payload);
+
+        return new Entity($response[$this->entity]);
     }
 
     /**
@@ -205,7 +212,42 @@ class DataService
 
         $uri = $this->getRequestUrl('query') . '?query=' . urlencode($query);
 
-        return $this->request('GET', $uri);
+        $response = $this->request('GET', $uri);
+
+        return new QueryResponse($response['QueryResponse'][$this->entity]);
+    }
+
+    /**
+     * Send CDC request
+     * 
+     * @param  array        $entities
+     * @param  DateTime     $changed_since
+     * @return array
+     */
+    public function cdc(array $entities, DateTime $changed_since)
+    {
+        $entities_value = urlencode(implode(',', $entities));
+        $changed_since_value = urlencode(date_format($changed_since, DateTime::ATOM));
+        $uri = $this->getRequestUrl('cdc') . '?entities=' . $entities_value . '&changedSince=' . $changed_since_value;
+
+        $response = $this->request('GET', $uri);
+
+        if (!isset($response['CDCResponse']) || !isset($response['CDCResponse'][0]['QueryResponse'])) {
+            throw new \Exception("Invalid CDC response.");
+        }
+
+        $query_response = $response['CDCResponse'][0]['QueryResponse'];
+        $result = [];
+        foreach ($query_response as $values) {
+            foreach ($values as $key => $value) {
+                if (!isset($result[$key])) {
+                    $result[$key] = [];
+                }
+                $result[$key][] = new Entity($value);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -237,7 +279,7 @@ class DataService
      * @param  string $method
      * @param  string $uri
      * @param  string|array      $body
-     * @return Entity|QueryResponse
+     * @return array
      * @throws \Exception
      */
     public function request($method, $uri, array $body = null)
@@ -251,15 +293,7 @@ class DataService
         }
 
         try {
-            $response = $client->createRequest($method, $uri, $headers, $body)->send()->json();
-
-            $keys = array_keys($response);
-            $values = array_values($response);
-
-            $is_query_response = isset($keys[0]) && $keys[0] == 'QueryResponse';
-            $data = isset($values[0]) ? $values[0] : [];
-
-            return $is_query_response ? new QueryResponse($data) : new Entity($data);
+            return $client->createRequest($method, $uri, $headers, $body)->send()->json();
         } catch (BadResponseException $e) {
             $response = $e->getResponse();
             $body = $response->getBody();

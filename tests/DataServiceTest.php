@@ -3,6 +3,8 @@
 namespace ActiveCollab\Quickbooks\Tests;
 
 use ActiveCollab\Quickbooks\DataService;
+use DateTime;
+use Exception;
 
 class DataServiceTest extends TestCase
 {
@@ -73,18 +75,19 @@ class DataServiceTest extends TestCase
                                 ->setMethods([ 'request' ])
                                 ->getMock();
 
-        $entity = new \ActiveCollab\Quickbooks\Data\Entity([ 'Id' => 1 ]);
-
         $mockDataService->expects($this->any())
                         ->method('request')
-                        ->will($this->returnValue($entity));
+                        ->will($this->returnValue(json_decode('{"Invoice": { "Id": "1" } }', true)));
 
-        $entity1 = $mockDataService->create([ 'Id' => 1 ]);
-        $entity2 = $mockDataService->read(1);
-        $entity3 = $mockDataService->update([ 'Id' => 1 ]);
-        $this->assertSame($entity, $entity1);
-        $this->assertSame($entity, $entity2);
-        $this->assertSame($entity, $entity3);
+        $mockDataService->setEntity('Invoice');
+
+        $result1 = $mockDataService->create([ 'Id' => 1 ]);
+        $result2 = $mockDataService->read(1);
+        $result3 = $mockDataService->update([ 'Id' => 1 ]);
+
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $result1);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $result2);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $result3);
     }
 
     /**
@@ -97,11 +100,9 @@ class DataServiceTest extends TestCase
                                 ->setMethods([ 'request' ])
                                 ->getMock();
 
-        $entity = new \ActiveCollab\Quickbooks\Data\Entity([ 'Id' => 1 ]);
-
         $mockDataService->expects($this->any())
                         ->method('request')
-                        ->will($this->returnValue($entity));
+                        ->will($this->returnValue(json_decode('{"Invoice":{"Id":"1"}}', true)));
 
         $this->assertSame(null, $mockDataService->delete([ 'Id' => 1 ]));
     }
@@ -116,14 +117,55 @@ class DataServiceTest extends TestCase
                                 ->setMethods([ 'request' ])
                                 ->getMock();
 
-        $query_response = new \ActiveCollab\Quickbooks\Data\QueryResponse([]);
+        $value = json_decode('{"QueryResponse":{"Invoice":[]}}', true);
 
         $mockDataService->expects($this->any())
                         ->method('request')
-                        ->will($this->returnValue($query_response));
+                        ->will($this->returnValue($value));
 
-        $collection = $mockDataService->setEntity('Invoice')->query();
-        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\QueryResponse', $collection);
+        $result = $mockDataService->setEntity('Invoice')->query();
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\QueryResponse', $result);
+    }
+
+    /**
+     * Test CDCRequest
+     */
+    public function testCDCRequest()
+    {
+        $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
+                                ->setConstructorArgs($this->getTestArguments())
+                                ->setMethods([ 'request' ])
+                                ->getMock();
+
+        $value = json_decode('{"CDCResponse":[{"QueryResponse":[{"Invoice":[{"Id":"1"}]}]}]}', true);
+
+        $mockDataService->expects($this->any())
+                        ->method('request')
+                        ->will($this->returnValue($value));
+
+        $result = $mockDataService->cdc(['Invoice'], new DateTime());
+
+        $this->assertArrayHasKey('Invoice', $result);
+        $this->assertCount(1, $result['Invoice']);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $result['Invoice'][0]);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testCDCRequestThrowsException() {
+        $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
+                                ->setConstructorArgs($this->getTestArguments())
+                                ->setMethods([ 'request' ])
+                                ->getMock();
+
+        $value = json_decode('{}', true);
+
+        $mockDataService->expects($this->any())
+                        ->method('request')
+                        ->will($this->returnValue($value));
+
+        $mockDataService->cdc(['Invoice'], new DateTime());
     }
 
     /**
@@ -159,11 +201,13 @@ class DataServiceTest extends TestCase
 
         $response->expects($this->once())
                  ->method('json')
-                 ->will($this->returnValue(json_decode('{"Invoice": { "Id": "1" } }', true)));
+                 ->will($this->returnValue(json_decode('{"Invoice":{"Id":"1"}}', true)));
 
-        $entity = $mockDataService->request('POST', 'http://www.example.com', [ 'Id' => 1 ]);
+        $response = $mockDataService->request('POST', 'http://www.example.com', [ 'Id' => 1 ]);
 
-        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $entity);
+        $this->assertArrayHasKey('Invoice', $response);
+        $this->assertArrayHasKey('Id', $response['Invoice']);
+        $this->assertEquals('1', $response['Invoice']['Id']);
     }
 
     /**
