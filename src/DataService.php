@@ -150,7 +150,7 @@ class DataService
     {
         $response = $this->request('POST', $this->getRequestUrl($this->entity), $payload);
 
-        return new Entity($response);
+        return new Entity($response[$this->entity]);
     }
 
     /**
