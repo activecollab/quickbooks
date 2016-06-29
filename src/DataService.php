@@ -214,7 +214,7 @@ class DataService
 
         $response = $this->request('GET', $uri);
 
-        return new QueryResponse($response['QueryResponse'][$this->entity]);
+        return new QueryResponse($response['QueryResponse']);
     }
 
     /**

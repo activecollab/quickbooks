@@ -117,14 +117,23 @@ class DataServiceTest extends TestCase
                                 ->setMethods([ 'request' ])
                                 ->getMock();
 
-        $value = json_decode('{"QueryResponse":{"Invoice":[]}}', true);
+        $value = json_decode('{"QueryResponse":{"Invoice":[{"Id":"1"}]}}', true);
 
         $mockDataService->expects($this->any())
                         ->method('request')
                         ->will($this->returnValue($value));
 
         $result = $mockDataService->setEntity('Invoice')->query();
+
         $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\QueryResponse', $result);
+        $entities = $result->getIterator();
+
+        $this->assertCount(1, $entities);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $entities[0]);
+
+        $data = $entities[0]->getRawData();
+        $this->assertArrayHasKey('Id', $data);
+        $this->assertEquals(1, $data['Id']);
     }
 
     /**
