@@ -146,7 +146,7 @@ class DataServiceTest extends TestCase
                                 ->setMethods([ 'request' ])
                                 ->getMock();
 
-        $value = json_decode('{"CDCResponse":[{"QueryResponse":[{"Invoice":[{"Id":"1"}]}]}]}', true);
+        $value = json_decode('{"CDCResponse":[{"QueryResponse":[{"Invoice":[{"Id":"1"},{"Id":"2"},{"Id":"3","status":"Deleted"}]}]}]}', true);
 
         $mockDataService->expects($this->any())
                         ->method('request')
@@ -155,8 +155,23 @@ class DataServiceTest extends TestCase
         $result = $mockDataService->cdc(['Invoice'], new DateTime());
 
         $this->assertArrayHasKey('Invoice', $result);
-        $this->assertCount(1, $result['Invoice']);
-        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $result['Invoice'][0]);
+        $this->assertCount(3, $result['Invoice']);
+
+        $entity1 = $result['Invoice'][0];
+        $entity2 = $result['Invoice'][1];
+        $entity3 = $result['Invoice'][2];
+
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $entity1);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $entity2);
+        $this->assertInstanceOf('\ActiveCollab\Quickbooks\Data\Entity', $entity3);
+
+        $this->assertEquals(1, $entity1->getId());
+        $this->assertEquals(2, $entity2->getId());
+        $this->assertEquals(3, $entity3->getId());
+
+        $entity3_raw_data = $entity3->getRawData();
+        $this->assertArrayHasKey('status', $entity3_raw_data);
+        $this->assertEquals('Deleted', $entity3_raw_data['status']);
     }
 
     /**

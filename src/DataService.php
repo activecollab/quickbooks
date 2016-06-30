@@ -238,12 +238,14 @@ class DataService
 
         $query_response = $response['CDCResponse'][0]['QueryResponse'];
         $result = [];
-        foreach ($query_response as $values) {
-            foreach ($values as $key => $value) {
+        foreach ($query_response as $data) {
+            foreach ($data as $key => $values) {
                 if (!isset($result[$key])) {
                     $result[$key] = [];
                 }
-                $result[$key][] = new Entity($value);
+                foreach ($values as $value) {
+                    $result[$key][] = new Entity($value);
+                }
             }
         }
 
