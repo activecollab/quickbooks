@@ -1,5 +1,5 @@
 {
-    "name": "xeonys/qbo-wrapper",
+    "name": "inextensodigital/qbo-wrapper",
     "description": "Quickbooks online API wrapper",
     "license": "MIT",
     "require": {
