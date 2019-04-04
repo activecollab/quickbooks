@@ -9,7 +9,7 @@
         "quickbooks/v3-php-sdk": "^5.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.*"
+        "phpunit/phpunit": "^5.0"
     },
     "keywords": [
         "oauth",
@@ -36,6 +36,6 @@
             "ActiveCollab\\Quickbooks\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
