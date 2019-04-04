@@ -10,15 +10,19 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
-class DataService implements DataServiceInterface
+use QuickBooksOnline\API\DataService\DataService;
+
+abstract class Client implements ClientInterface
 {
     private $client_id;
     private $client_secret;
+    private $base_url;
 
-    public function __construct(string $client_id, string $client_secret)
+    public function __construct(string $client_id, string $client_secret, string $base_url)
     {
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
+        $this->base_url = $base_url;
     }
 
     protected function getClientId(): string
@@ -31,17 +35,10 @@ class DataService implements DataServiceInterface
         return $this->client_secret;
     }
 
-    abstract public function getDataService(): \QuickBooksOnline\API\DataService\DataService
-//    {
-//        return DataService::Configure(
-//            [
-//                'auth_mode' => 'oauth2',
-//                'ClientID' => $this->getClientId(),
-//                'ClientSecret' => $this->getClientSecret(),
-//                'RedirectURI' => $this->redirect_uri,
-//                'scope' => 'com.intuit.quickbooks.accounting',
-//                'baseUrl' => $this->base_url, // "Development/Production"
-//            ]
-//        );
-//    }
+    protected function getBaseUrl(): string
+    {
+        return $this->base_url;
+    }
+
+    abstract protected function getDataService(): DataService;
 }

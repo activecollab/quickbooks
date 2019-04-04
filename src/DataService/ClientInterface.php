@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
-interface DataServiceInterface
+interface ClientInterface
 {
 }

@@ -1,15 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: markodobric
- * Date: 4/4/19
- * Time: 10:24 AM
+
+/*
+ * This file is part of the ActiveCollab project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
+
+declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
-
-interface ResourceClientInterface
+interface ResourceClientInterface extends ClientInterface
 {
-
 }

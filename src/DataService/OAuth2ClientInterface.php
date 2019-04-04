@@ -1,15 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: markodobric
- * Date: 4/3/19
- * Time: 3:04 PM
+
+/*
+ * This file is part of the ActiveCollab project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
+
+declare(strict_type=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
+use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
 
-interface OAuth2ClientInterface
+interface OAuth2ClientInterface extends ClientInterface
 {
+    public function getAuthorizationUrl(): string;
 
+    public function getAuthorizationToken(
+        string $authorization_code,
+        string $realm_id
+    ): OAuth2AccessToken;
 }
