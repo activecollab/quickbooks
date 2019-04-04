@@ -35,5 +35,7 @@
         "psr-4": {
             "ActiveCollab\\Quickbooks\\Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
