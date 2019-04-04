@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-declare(strict_type=1);
+declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
@@ -29,29 +29,23 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
         $this->redirect_uri = $redirect_uri;
     }
 
-    protected function getRedirectUri(): string
+    private function getRedirectUri(): string
     {
         return $this->redirect_uri;
     }
 
-    private $data_service = false;
-
     protected function getDataService(): DataService
     {
-        if ($this->data_service === false) {
-            $this->data_service = DataService::Configure(
-                [
-                    'auth_mode' => 'oauth2',
-                    'ClientID' => $this->getClientId(),
-                    'ClientSecret' => $this->getClientSecret(),
-                    'RedirectURI' => $this->getRedirectUri(),
-                    'scope' => 'com.intuit.quickbooks.accounting',
-                    'baseUrl' => $this->getBaseUrl(), // "Development/Production"
-                ]
-            );
-        }
-
-        return $this->data_service;
+        return DataService::Configure(
+            [
+                'auth_mode' => 'oauth2',
+                'ClientID' => $this->getClientId(),
+                'ClientSecret' => $this->getClientSecret(),
+                'RedirectURI' => $this->getRedirectUri(),
+                'scope' => 'com.intuit.quickbooks.accounting',
+                'baseUrl' => $this->getBaseUrl(),
+            ]
+        );
     }
 
     public function getAuthorizationUrl(): string
@@ -59,14 +53,21 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
         return $this->getDataService()->getOAuth2LoginHelper()->getAuthorizationCodeURL();
     }
 
-    public function getAuthorizationToken(
-        string $authorization_code,
-        string $realm_id
-    ): OAuth2AccessToken
+    public function getAuthorizationToken(string $authorization_code, string $realm_id): OAuth2AccessToken
     {
         return $this->getDataService()->getOAuth2LoginHelper()->exchangeAuthorizationCodeForToken(
             $authorization_code,
             $realm_id
         );
+    }
+
+    public function refreshAccessToken(string $refresh_token): OAuth2AccessToken
+    {
+        return $this->getDataService()->getOAuth2LoginHelper()->refreshAccessTokenWithRefreshToken($refresh_token);
+    }
+
+    public function revokeAccessToken(string $access_token): bool
+    {
+        return $this->getDataService()->getOAuth2LoginHelper()->revokeToken($access_token);
     }
 }

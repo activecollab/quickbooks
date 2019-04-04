@@ -16,8 +16,9 @@ interface OAuth2ClientInterface extends ClientInterface
 {
     public function getAuthorizationUrl(): string;
 
-    public function getAuthorizationToken(
-        string $authorization_code,
-        string $realm_id
-    ): OAuth2AccessToken;
+    public function getAuthorizationToken(string $authorization_code, string $realm_id): OAuth2AccessToken;
+
+    public function refreshAccessToken(string $refresh_token): OAuth2AccessToken;
+
+    public function revokeAccessToken(string $access_token): bool;
 }
