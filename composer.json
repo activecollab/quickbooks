@@ -4,8 +4,6 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1",
-        "league/oauth1-client": "~1.0",
-        "guzzle/guzzle": "~3.0",
         "quickbooks/v3-php-sdk": "^5.0"
     },
     "require-dev": {
