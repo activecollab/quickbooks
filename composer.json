@@ -5,8 +5,8 @@
     "require": {
         "php": ">=7.1",
         "quickbooks/v3-php-sdk": "^5.0",
-        "league/oauth1-client": "^1.7",
-        "guzzle/guzzle": "^3.9"
+        "league/oauth1-client": "1.6.*",
+        "guzzle/guzzle": "3.8.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0"
