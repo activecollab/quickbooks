@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-declare(strict_type=1);
+declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 

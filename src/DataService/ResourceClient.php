@@ -10,7 +10,13 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Quickbooks\DataService;
 
+use ActiveCollab\Quickbooks\Data\Entity;
+use ActiveCollab\Quickbooks\Data\QueryResponse;
+use DateTime;
+use Exception;
+use QuickBooksOnline\API\Core\Http\Serialization\JsonObjectSerializer;
 use QuickBooksOnline\API\DataService\DataService;
+use QuickBooksOnline\API\Facades\FacadeHelper;
 
 class ResourceClient extends Client implements ResourceClientInterface
 {
@@ -68,5 +74,90 @@ class ResourceClient extends Client implements ResourceClientInterface
         }
 
         return $this->data_service;
+    }
+
+    private $entity;
+
+    public function setEntity(string $entity): ResourceClientInterface
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function query(string $query = null): QueryResponse
+    {
+        if ($query === null) {
+            $query = "SELECT * FROM {$this->entity}";
+        }
+
+        $entities = $this->getDataService()->Query($query);
+
+        if ($error = $this->getDataService()->getLastError()) {
+            throw new Exception($error->getResponseBody());
+        }
+
+        if (empty($entities)) {
+            return new QueryResponse([]);
+        }
+
+        $result = [];
+
+        foreach ($entities as $entity) {
+            $result[0][] = $this->objectToArray($entity);
+        }
+
+        return new QueryResponse($result);
+    }
+
+    public function cdc(array $entities, DateTime $changed_since): array
+    {
+        $cdc_response = $this->getDataService()->CDC($entities, $changed_since->getTimestamp());
+
+        if ($error = $this->getDataService()->getLastError()) {
+            throw new Exception($error->getResponseBody());
+        }
+
+        $result = [];
+
+        foreach ($cdc_response->entities as $entity_name => $entity) {
+            if (!isset($result[$entity_name])) {
+                $result[$entity_name] = [];
+            }
+
+            $result[$entity_name][] = new Entity($this->objectToArray($entity));
+        }
+
+        return $result;
+    }
+
+    public function read(int $id): Entity
+    {
+        $entity = $this->getDataService()->FindById($this->entity, $id);
+
+        return new Entity($this->objectToArray($entity));
+    }
+
+    public function create(array $payload): Entity
+    {
+        $entity = $this
+            ->getDataService()
+            ->Add(
+                FacadeHelper::reflectArrayToObject($this->entity, $payload)
+            );
+
+        return new Entity($this->objectToArray($entity));
+    }
+
+    private function objectToArray($entity = null): array
+    {
+        if (!$entity) {
+            return [];
+        }
+
+        return json_decode(
+            (new JsonObjectSerializer())->Serialize($entity),
+            true
+        );
     }
 }
