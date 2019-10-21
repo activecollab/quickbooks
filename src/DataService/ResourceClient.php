@@ -114,7 +114,12 @@ class ResourceClient extends Client implements ResourceClientInterface
     {
         $cdc_response = $this->getDataService()->CDC(
             $entities,
-            $changed_since->getTimestamp()
+            urlencode(
+                date_format(
+                    $changed_since,
+                    DateTime::ATOM
+                )
+            )
         );
 
         if ($error = $this->getDataService()->getLastError()) {
