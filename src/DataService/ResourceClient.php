@@ -112,7 +112,10 @@ class ResourceClient extends Client implements ResourceClientInterface
 
     public function cdc(array $entities, DateTime $changed_since): array
     {
-        $cdc_response = $this->getDataService()->CDC($entities, $changed_since->getTimestamp());
+        $cdc_response = $this->getDataService()->CDC(
+            $entities,
+            $changed_since->getTimestamp()
+        );
 
         if ($error = $this->getDataService()->getLastError()) {
             throw new Exception($error->getResponseBody());
@@ -120,12 +123,16 @@ class ResourceClient extends Client implements ResourceClientInterface
 
         $result = [];
 
-        foreach ($cdc_response->entities as $entity_name => $entity) {
+        foreach ($cdc_response->entities as $entity_name => $entity_array) {
             if (!isset($result[$entity_name])) {
                 $result[$entity_name] = [];
             }
 
-            $result[$entity_name][] = new Entity($this->objectToArray($entity));
+            if (is_array($entity_array)) {
+                foreach ($entity_array as $entity) {
+                    $result[$entity_name][] = new Entity($this->objectToArray($entity));
+                }
+            }
         }
 
         return $result;
@@ -154,6 +161,8 @@ class ResourceClient extends Client implements ResourceClientInterface
         if (!$entity) {
             return [];
         }
+
+        $entity = is_array($entity) ? $entity[0] : $entity;
 
         return json_decode(
             (new JsonObjectSerializer())->Serialize($entity),
