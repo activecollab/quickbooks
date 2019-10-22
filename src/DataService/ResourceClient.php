@@ -55,7 +55,7 @@ class ResourceClient extends Client implements ResourceClientInterface
         return $this->realm_id;
     }
 
-    private $data_service = false;
+    protected $data_service = false;
 
     protected function getDataService(): DataService
     {
