@@ -165,16 +165,16 @@
         },
         {
             "name": "quickbooks/v3-php-sdk",
-            "version": "5.0.4",
+            "version": "v5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/intuit/QuickBooks-V3-PHP-SDK.git",
-                "reference": "f9d1e768adaba9bda7a1fd374adca04fc119b85c"
+                "reference": "670e0201518fbaad1e9339d76ab30eaf17078e62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/f9d1e768adaba9bda7a1fd374adca04fc119b85c",
-                "reference": "f9d1e768adaba9bda7a1fd374adca04fc119b85c",
+                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/670e0201518fbaad1e9339d76ab30eaf17078e62",
+                "reference": "670e0201518fbaad1e9339d76ab30eaf17078e62",
                 "shasum": ""
             },
             "require": {
@@ -214,7 +214,7 @@
                 "rest",
                 "smallbusiness"
             ],
-            "time": "2019-03-26 08:42:18"
+            "time": "2019-10-03 20:20:06"
         },
         {
             "name": "symfony/event-dispatcher",

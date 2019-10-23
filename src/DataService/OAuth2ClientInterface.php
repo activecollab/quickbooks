@@ -21,4 +21,12 @@ interface OAuth2ClientInterface extends ClientInterface
     public function refreshAccessToken(string $refresh_token): OAuth2AccessToken;
 
     public function revokeAccessToken(string $access_token): bool;
+
+    public function migrateOAuth1ToOAuth2(
+        string $consumer_key,
+        string $consumer_secret,
+        string $access_token,
+        string $access_token_secret,
+        string $environment
+    ): OAuth2AccessToken;
 }

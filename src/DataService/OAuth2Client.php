@@ -70,4 +70,26 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
     {
         return $this->getDataService()->getOAuth2LoginHelper()->revokeToken($access_token);
     }
+
+    public function migrateOAuth1ToOAuth2(
+        string $consumer_key,
+        string $consumer_secret,
+        string $access_token,
+        string $access_token_secret,
+        string $environment
+    ): OAuth2AccessToken
+    {
+        return $this
+            ->getDataService()
+            ->getOAuth2LoginHelper()
+            ->OAuth1ToOAuth2Migration(
+                $consumer_key,
+                $consumer_secret,
+                $access_token,
+                $access_token_secret,
+                'com.intuit.quickbooks.accounting',
+                null,
+                $environment
+            );
+    }
 }
