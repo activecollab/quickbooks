@@ -14,7 +14,6 @@ use ActiveCollab\Quickbooks\Data\Entity;
 use ActiveCollab\Quickbooks\Data\QueryResponse;
 use DateTime;
 use Exception;
-use QuickBooksOnline\API\Core\Http\Serialization\JsonObjectSerializer;
 use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Facades\FacadeHelper;
 
@@ -167,10 +166,10 @@ class ResourceClient extends Client implements ResourceClientInterface
             return [];
         }
 
-        $entity = is_array($entity) ? $entity[0] : $entity;
-
         return json_decode(
-            (new JsonObjectSerializer())->Serialize($entity),
+            json_encode(
+                is_array($entity) ? $entity[0] : $entity
+            ),
             true
         );
     }
