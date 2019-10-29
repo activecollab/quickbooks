@@ -13,8 +13,7 @@ class Entity implements \JsonSerializable
      */
     public function __construct(array $data)
     {
-        $values = array_values($data);
-        $this->data = isset($values[0]) && is_array($values[0]) ? $values[0] : $data;
+        $this->data = $data;
     }
 
     /**

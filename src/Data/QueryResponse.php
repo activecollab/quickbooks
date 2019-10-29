@@ -2,8 +2,6 @@
 
 namespace ActiveCollab\Quickbooks\Data;
 
-use ActiveCollab\Quickbooks\Data\Entity;
-
 class QueryResponse implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
