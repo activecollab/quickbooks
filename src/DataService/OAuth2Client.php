@@ -16,17 +16,20 @@ use QuickBooksOnline\API\DataService\DataService;
 class OAuth2Client extends Client implements OAuth2ClientInterface
 {
     private $redirect_uri;
+    private $state;
 
     public function __construct(
         string $client_id,
         string $client_secret,
         string $redirect_uri,
-        string $base_url
+        string $base_url,
+        string $state
     )
     {
         parent::__construct($client_id, $client_secret, $base_url);
 
         $this->redirect_uri = $redirect_uri;
+        $this->state = $state;
     }
 
     private function getRedirectUri(): string
@@ -44,6 +47,7 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
                 'RedirectURI' => $this->getRedirectUri(),
                 'scope' => 'com.intuit.quickbooks.accounting',
                 'baseUrl' => $this->getBaseUrl(),
+                'state' => $this->state,
             ]
         );
     }
