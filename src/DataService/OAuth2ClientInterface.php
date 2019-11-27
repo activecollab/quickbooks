@@ -27,6 +27,7 @@ interface OAuth2ClientInterface extends ClientInterface
         string $consumer_secret,
         string $access_token,
         string $access_token_secret,
+        string $redirect_uri,
         string $environment
     ): OAuth2AccessToken;
 }

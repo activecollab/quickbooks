@@ -80,6 +80,7 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
         string $consumer_secret,
         string $access_token,
         string $access_token_secret,
+        string $redirect_uri,
         string $environment
     ): OAuth2AccessToken
     {
@@ -92,7 +93,7 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
                 $access_token,
                 $access_token_secret,
                 'com.intuit.quickbooks.accounting',
-                null,
+                $redirect_uri,
                 $environment
             );
     }
