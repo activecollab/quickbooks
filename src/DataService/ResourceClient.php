@@ -146,6 +146,17 @@ class ResourceClient extends Client implements ResourceClientInterface
     {
         $entity = $this->getDataService()->FindById($this->entity, $id);
 
+        if ($error = $this->getDataService()->getLastError()) {
+            throw new Exception(
+                sprintf(
+                    'OAuth error: %s; Response body: %s',
+                    $error->getOAuthHelperError(),
+                    $error->getResponseBody()
+                ),
+                $error->getHttpStatusCode()
+            );
+        }
+
         return new Entity($this->objectToArray($entity));
     }
 
@@ -156,6 +167,17 @@ class ResourceClient extends Client implements ResourceClientInterface
             ->Add(
                 FacadeHelper::reflectArrayToObject($this->entity, $payload)
             );
+
+        if ($error = $this->getDataService()->getLastError()) {
+            throw new Exception(
+                sprintf(
+                    'OAuth error: %s; Response body: %s',
+                    $error->getOAuthHelperError(),
+                    $error->getResponseBody()
+                ),
+                $error->getHttpStatusCode()
+            );
+        }
 
         return new Entity($this->objectToArray($entity));
     }
