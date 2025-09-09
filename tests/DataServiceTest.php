@@ -1,10 +1,13 @@
-<?php 
+<?php
 
 namespace ActiveCollab\Quickbooks\Tests;
 
 use ActiveCollab\Quickbooks\DataService;
+use ActiveCollab\Quickbooks\Quickbooks;
 use DateTime;
 use Exception;
+use GuzzleHttp\Client;
+use League\OAuth1\Client\Credentials\ClientCredentials;
 
 class DataServiceTest extends TestCase
 {
@@ -16,7 +19,7 @@ class DataServiceTest extends TestCase
     /**
      * Set up test environment
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +37,7 @@ class DataServiceTest extends TestCase
     /**
      * Tear down test environemnt
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->dataService = null;
 
@@ -46,7 +49,7 @@ class DataServiceTest extends TestCase
      */
     public function testGetApiUrl()
     {
-        $this->assertContains('https://quickbooks.api.intuit.com', $this->dataService->getApiUrl(), 'Invalid api url');
+        $this->assertStringContainsString('https://quickbooks.api.intuit.com', $this->dataService->getApiUrl(), 'Invalid api url');
     }
 
     /**
@@ -54,7 +57,7 @@ class DataServiceTest extends TestCase
      */
     public function testCreateHttpClient()
     {
-        $this->assertInstanceOf('Guzzle\Service\Client', $this->dataService->createHttpClient());
+        $this->assertInstanceOf(Client::class, $this->dataService->createHttpClient());
     }
 
     /**
@@ -174,13 +177,11 @@ class DataServiceTest extends TestCase
         $this->assertEquals('Deleted', $entity3_raw_data['status']);
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testCDCRequestThrowsException() {
+        $this->expectException(Exception::class);
         $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
                                 ->setConstructorArgs($this->getTestArguments())
-                                ->setMethods([ 'request' ])
+                                ->onlyMethods([ 'request' ])
                                 ->getMock();
 
         $value = json_decode('{}', true);
@@ -197,35 +198,31 @@ class DataServiceTest extends TestCase
      */
     public function testRequest()
     {
-        $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
+        $mockDataService = $this->getMockBuilder(DataService::class)
                                 ->setConstructorArgs($this->getTestArguments())
-                                ->setMethods([ 'createServer', 'createHttpClient' ])
+                                ->onlyMethods([ 'createServer', 'createHttpClient' ])
                                 ->getMock();
+
+        $quickBooks = $this->createMock(QuickBooks::class);
+        $quickBooks->method('getHeaders')
+            ->willReturn($this->getMockAuthorizationHeaders());
 
         $mockDataService->expects($this->once())
                         ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
+                        ->will($this->returnValue($quickBooks));
 
-        $mockServer->expects($this->once())
-                   ->method('getHeaders')
-                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
+        $client = $this->createMockGuzzleClient([
+            $this->createJsonResponse(['Invoice' => [
+                'Id' => 1,
+            ]])
+        ]);
 
         $mockDataService->expects($this->once())
-                        ->method('createHttpClient')
-                        ->will($this->returnValue($mockHttpClient = $this->getMock('stdClass', ['createRequest'])));
+            ->method('createHttpClient')
+            ->will($this->returnValue($client));
 
-        $mockHttpClient->expects($this->once())
-                       ->method('createRequest')
-                       ->with('POST', 'http://www.example.com', $this->getTestHeaders(), json_encode([ 'Id' => 1 ]))
-                       ->will($this->returnValue($request = $this->getMock('stdClass', [ 'send' ])));
 
-        $request->expects($this->once())
-                ->method('send')
-                ->will($this->returnValue($response = $this->getMock('stdClass', [ 'json' ])));
 
-        $response->expects($this->once())
-                 ->method('json')
-                 ->will($this->returnValue(json_decode('{"Invoice":{"Id":"1"}}', true)));
 
         $response = $mockDataService->request('POST', 'http://www.example.com', [ 'Id' => 1 ]);
 
@@ -236,43 +233,33 @@ class DataServiceTest extends TestCase
 
     /**
      * Test catch request exception
-     * 
-     * @expectedException       Exception
+     *
      */
     public function testCatchRequestException()
     {
-        $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
-                                ->setConstructorArgs($this->getTestArguments())
-                                ->setMethods([ 'createServer', 'createHttpClient' ])
-                                ->getMock();
+        $this->expectException(Exception::class);
+        $mockDataService = $this->getMockBuilder(DataService::class)
+            ->setConstructorArgs($this->getTestArguments())
+            ->onlyMethods([ 'createServer', 'createHttpClient' ])
+            ->getMock();
+
+        $quickBooks = $this->createMock(QuickBooks::class);
+        $quickBooks->method('getHeaders')
+            ->willReturn($this->getMockAuthorizationHeaders());
 
         $mockDataService->expects($this->once())
-                        ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
+            ->method('createServer')
+            ->will($this->returnValue($quickBooks));
 
-        $mockServer->expects($this->once())
-                   ->method('getHeaders')
-                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
+        $client = $this->createMockGuzzleClient([
+            $this->createErrorResponse(500, 'POST', 'http://www.example.com', 'Server timeout')
+        ]);
 
         $mockDataService->expects($this->once())
-                        ->method('createHttpClient')
-                        ->will($this->returnValue($mockClient = $this->getMock('stdClass', [ 'createRequest' ])));
+            ->method('createHttpClient')
+            ->will($this->returnValue($client));
 
-        $mockClient->expects($this->once())
-                        ->method('createRequest')
-                        ->with('GET', 'http://www.example.com', $this->getTestHeaders(), null)
-                        ->will($this->returnValue($request = $this->getMock('stdClass', [ 'send' ])));
-
-        $request->expects($this->once())
-                ->method('send')
-                ->will($this->returnValue($response = $this->getMock('stdClass', [ 'json' ])));
-
-        $httpResponseException = new \Guzzle\Http\Exception\BadResponseException();
-        $httpResponseException->setResponse(new \Guzzle\Http\Message\Response(500));
-
-        $response->expects($this->once())->method('json')->will($this->throwException($httpResponseException));
-
-        $mockDataService->request('GET', 'http://www.example.com');
+        $mockDataService->request('POST', 'http://www.example.com', [ 'Id' => 1 ]);
     }
 
     /**
@@ -291,18 +278,22 @@ class DataServiceTest extends TestCase
      */
     public function testCollectHeaders()
     {
-        $mockDataService = $this->getMockBuilder('\ActiveCollab\Quickbooks\DataService')
-                                ->setConstructorArgs($this->getTestArguments())
-                                ->setMethods(['createServer'])
-                                ->getMock();
+
+
+        $mockDataService = $this->getMockBuilder(DataService::class)
+            ->setConstructorArgs($this->getTestArguments())
+            ->onlyMethods([ 'createServer' ])
+            ->getMock();
+
+        $clientCredentials = $this->createMock(ClientCredentials::class);
+        $clientCredentials->method('getIdentifier')->willReturn('1234');
+        $clientCredentials->method('getSecret')->willReturn('test');
+
+        $quickBooks = new Quickbooks($clientCredentials);
 
         $mockDataService->expects($this->any())
-                        ->method('createServer')
-                        ->will($this->returnValue($mockServer = $this->getMock('stdClass', [ 'getHeaders' ])));
-
-        $mockServer->expects($this->any())
-                   ->method('getHeaders')
-                   ->will($this->returnValue($this->getMockAuthorizationHeaders()));
+            ->method('createServer')
+            ->will($this->returnValue($quickBooks));
 
         $headers = $mockDataService->getHeaders('GET', 'http://www.example.com');
 
@@ -321,7 +312,7 @@ class DataServiceTest extends TestCase
 
     /**
      * Get test arguments
-     * 
+     *
      * @return array
      */
     public function getTestArguments()
@@ -337,7 +328,7 @@ class DataServiceTest extends TestCase
 
     /**
      * Get test headers
-     * 
+     *
      * @return array
      */
     public function getTestHeaders()

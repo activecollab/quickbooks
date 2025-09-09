@@ -16,7 +16,7 @@ class QueryResponseTest extends TestCase
     /**
      * Set up test environmeet
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -34,7 +34,7 @@ class QueryResponseTest extends TestCase
     /**
      * Tear down test environment
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->query_response = null;
 

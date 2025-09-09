@@ -2,9 +2,9 @@
 
 namespace ActiveCollab\Quickbooks;
 
+use GuzzleHttp\Exception\BadResponseException;
 use League\OAuth1\Client\Server\User;
 use League\OAuth1\Client\Server\Server;
-use Guzzle\Http\Exception\BadResponseException;
 use ActiveCollab\Quickbooks\Data\ConnectionResponse;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\CredentialsException;
@@ -14,7 +14,7 @@ class Quickbooks extends Server
 {
     /**
      * Return temporary credentials url.
-     * 
+     *
      * @return string
      */
     public function urlTemporaryCredentials()
@@ -24,7 +24,7 @@ class Quickbooks extends Server
 
     /**
      * Return authorization url.
-     * 
+     *
      * @return string
      */
     public function urlAuthorization()
@@ -34,7 +34,7 @@ class Quickbooks extends Server
 
     /**
      * Return token credentials url.
-     * 
+     *
      * @return string
      */
     public function urlTokenCredentials()
@@ -44,7 +44,7 @@ class Quickbooks extends Server
 
     /**
      * Return user details url.
-     * 
+     *
      * @return string
      */
     public function urlUserDetails()
@@ -54,7 +54,7 @@ class Quickbooks extends Server
 
     /**
      * Return connection url.
-     * 
+     *
      * @return string
      */
     public function urlConnection()
@@ -64,7 +64,7 @@ class Quickbooks extends Server
 
     /**
      * Return user details.
-     * 
+     *
      * @param  array            $data
      * @param  TokenCredentials $tokenCredentials
      * @return User
@@ -87,7 +87,7 @@ class Quickbooks extends Server
 
     /**
      * Return user uid.
-     * 
+     *
      * @param array            $data
      * @param TokenCredentials $tokenCredentials
      */
@@ -98,7 +98,7 @@ class Quickbooks extends Server
 
     /**
      * Return user email.
-     * 
+     *
      * @param  array            $data
      * @param  TokenCredentials $tokenCredentials
      * @return string
@@ -110,7 +110,7 @@ class Quickbooks extends Server
 
     /**
      * Retrun user screen name.
-     * 
+     *
      * @param array            $data
      * @param TokenCredentials $tokenCredentials
      */
@@ -121,7 +121,7 @@ class Quickbooks extends Server
 
     /**
      * Return headers.
-     * 
+     *
      * @param  CredentialsInterface $credentials
      * @param  string               $method
      * @param  string               $url
@@ -140,7 +140,7 @@ class Quickbooks extends Server
 
     /**
      * Reconnect and return new access tokens.
-     * 
+     *
      * @param  tokenCredentials     $tokenCredentials
      * @return ConnectionResponse
      */
@@ -162,7 +162,7 @@ class Quickbooks extends Server
 
     /**
      * Send connection request.
-     * 
+     *
      * @param  TokenCredentials     $tokenCredentials
      * @param  string               $action
      * @return ConnectionResponse
@@ -175,9 +175,12 @@ class Quickbooks extends Server
         $headers = $this->getHeaders($tokenCredentials, 'GET', $uri);
 
         try {
-            $response = $client->get($uri, $headers)->send()->json();
+            $request = $client->get($uri, [
+                'headers' => $headers,
+            ]);
+            $response = json_decode($request->getBody()->getContents(), true);
         } catch (BadResponseException $e) {
-            return $this->handleTokenCredentialsBadResponse($e);
+            $this->handleTokenCredentialsBadResponse($e);
         }
 
         return new ConnectionResponse($response);
