@@ -6,7 +6,7 @@
         "php": ">=8.0",
         "quickbooks/v3-php-sdk": "^v6.2.0",
         "league/oauth1-client": "^v1.11.0",
-        "guzzlehttp/guzzle": "^7.10.0",
+        "guzzlehttp/guzzle": "^7.0.0",
         "ext-json": "*"
     },
     "require-dev": {
