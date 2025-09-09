@@ -2,18 +2,20 @@
 
 namespace ActiveCollab\Quickbooks\Data;
 
+use ArrayIterator;
+
 class QueryResponse implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * Collection of entities
-     * 
+     *
      * @var array
      */
     protected $entities = [];
 
     /**
      * Construct query response
-     * 
+     *
      * @param array $data
      */
     public function __construct(array $data)
@@ -28,30 +30,30 @@ class QueryResponse implements \IteratorAggregate, \Countable, \JsonSerializable
 
     /**
      * Return iterator
-     * 
+     *
      * @return ArrayIterator
      */
-    public function getIterator() 
+    public function getIterator() : ArrayIterator
     {
-        return new \ArrayIterator($this->entities);
+        return new ArrayIterator($this->entities);
     }
 
     /**
      * Return number of object in collection
-     * 
+     *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->entities);
     }
 
     /**
      * Return serialize data
-     * 
+     *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->entities;
     }

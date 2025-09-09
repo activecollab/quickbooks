@@ -14,7 +14,7 @@ class SandboxTest extends TestCase
     /**
      * Set up test environment
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class SandboxTest extends TestCase
     /**
      * Tear down test environement
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->sandbox = null;
 
@@ -44,7 +44,7 @@ class SandboxTest extends TestCase
      */
     public function is_proper_api_url_placed()
     {
-        $this->assertContains(
+        $this->assertStringContainsString(
             'https://sandbox-quickbooks.api.intuit.com',
             $this->sandbox->getApiUrl(),
             'Invalid sandbox api url'
