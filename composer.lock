@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b2b6b0533f08284cfaba628b0ffa6a0",
+    "content-hash": "9a14b568ffe5c4667ea4d13979bd3754",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -569,16 +569,16 @@
         },
         {
             "name": "quickbooks/v3-php-sdk",
-            "version": "v6.2.0",
+            "version": "v6.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/intuit/QuickBooks-V3-PHP-SDK.git",
-                "reference": "0c28bc3c45df1460b1be3280e58475e030a00ba7"
+                "reference": "b6c8ab787e296aca3a713ff7944caba5b04dde41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/0c28bc3c45df1460b1be3280e58475e030a00ba7",
-                "reference": "0c28bc3c45df1460b1be3280e58475e030a00ba7",
+                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/b6c8ab787e296aca3a713ff7944caba5b04dde41",
+                "reference": "b6c8ab787e296aca3a713ff7944caba5b04dde41",
                 "shasum": ""
             },
             "require": {
@@ -623,9 +623,9 @@
             ],
             "support": {
                 "issues": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/issues",
-                "source": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/tree/v6.2.0"
+                "source": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/tree/v6.1.4"
             },
-            "time": "2025-01-16T06:51:15+00:00"
+            "time": "2024-08-27T06:58:32+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
