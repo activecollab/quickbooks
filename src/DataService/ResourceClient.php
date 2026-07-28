@@ -17,6 +17,7 @@ use DateTime;
 use Exception;
 use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Facades\FacadeHelper;
+use SensitiveParameter;
 use Throwable;
 
 class ResourceClient extends Client implements ResourceClientInterface
@@ -30,10 +31,10 @@ class ResourceClient extends Client implements ResourceClientInterface
 
     public function __construct(
         string $client_id,
-        string $client_secret,
+        #[SensitiveParameter] string $client_secret,
         string $base_url,
-        string $access_token,
-        string $refresh_token,
+        #[SensitiveParameter] string $access_token,
+        #[SensitiveParameter] string $refresh_token,
         string $realm_id
     )
     {
