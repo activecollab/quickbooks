@@ -22,10 +22,6 @@ use Throwable;
 
 class ResourceClient extends Client implements ResourceClientInterface
 {
-    private $access_token;
-    private $refresh_token;
-    private $realm_id;
-
     private bool $log_raw_responses = false;
     private ?string $raw_response_log_dir = null;
 
@@ -33,16 +29,13 @@ class ResourceClient extends Client implements ResourceClientInterface
         string $client_id,
         #[SensitiveParameter] string $client_secret,
         string $base_url,
-        #[SensitiveParameter] string $access_token,
-        #[SensitiveParameter] string $refresh_token,
-        string $realm_id
+        #[SensitiveParameter] private string $access_token,
+        #[SensitiveParameter] private string $refresh_token,
+        private string $realm_id,
+        private ?string $minor_version = null
     )
     {
         parent::__construct($client_id, $client_secret, $base_url);
-
-        $this->access_token = $access_token;
-        $this->refresh_token = $refresh_token;
-        $this->realm_id = $realm_id;
     }
 
     protected function getAccessToken(): string
@@ -65,20 +58,31 @@ class ResourceClient extends Client implements ResourceClientInterface
     protected function getDataService(): DataService
     {
         if ($this->data_service === false) {
-            $this->data_service = DataService::Configure(
-                [
-                    'auth_mode' => 'oauth2',
-                    'ClientID' => $this->getClientId(),
-                    'ClientSecret' => $this->getClientSecret(),
-                    'accessTokenKey' => $this->getAccessToken(),
-                    'refreshTokenKey' => $this->getRefreshToken(),
-                    'QBORealmID' => $this->getRealmId(),
-                    'baseUrl' => $this->getBaseUrl(),
-                ]
+            $this->data_service = $this->applyMinorVersion(
+                DataService::Configure(
+                    [
+                        'auth_mode' => 'oauth2',
+                        'ClientID' => $this->getClientId(),
+                        'ClientSecret' => $this->getClientSecret(),
+                        'accessTokenKey' => $this->getAccessToken(),
+                        'refreshTokenKey' => $this->getRefreshToken(),
+                        'QBORealmID' => $this->getRealmId(),
+                        'baseUrl' => $this->getBaseUrl(),
+                    ]
+                )
             );
         }
 
         return $this->data_service;
+    }
+
+    protected function applyMinorVersion(DataService $data_service): DataService
+    {
+        if ($this->minor_version !== null) {
+            $data_service->setMinorVersion($this->minor_version);
+        }
+
+        return $data_service;
     }
 
     private $entity;

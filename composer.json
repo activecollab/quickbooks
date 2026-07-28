@@ -4,7 +4,7 @@
     "license": "MIT",
     "require": {
         "php": ">=8.2",
-        "quickbooks/v3-php-sdk": "6.1.2",
+        "quickbooks/v3-php-sdk": "^6.3",
         "league/oauth1-client": "^v1.11.0",
         "ext-json": "*"
     },

@@ -17,16 +17,18 @@ class LegacyResourceClient extends ResourceClient
     protected function getDataService(): DataService
     {
         if ($this->data_service === false) {
-            $this->data_service = DataService::Configure(
-                [
-                    'auth_mode' => 'oauth1',
-                    'consumerKey' => $this->getClientId(),
-                    'consumerSecret' => $this->getClientSecret(),
-                    'accessTokenKey' => $this->getAccessToken(),
-                    'accessTokenSecret' => $this->getRefreshToken(),
-                    'QBORealmID' => $this->getRealmId(),
-                    'baseUrl' => $this->getBaseUrl(),
-                ]
+            $this->data_service = $this->applyMinorVersion(
+                DataService::Configure(
+                    [
+                        'auth_mode' => 'oauth1',
+                        'consumerKey' => $this->getClientId(),
+                        'consumerSecret' => $this->getClientSecret(),
+                        'accessTokenKey' => $this->getAccessToken(),
+                        'accessTokenSecret' => $this->getRefreshToken(),
+                        'QBORealmID' => $this->getRealmId(),
+                        'baseUrl' => $this->getBaseUrl(),
+                    ],
+                ),
             );
         }
 
