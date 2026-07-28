@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace ActiveCollab\Quickbooks\DataService;
 
 use QuickBooksOnline\API\DataService\DataService;
+use SensitiveParameter;
 
 abstract class Client implements ClientInterface
 {
@@ -18,7 +19,7 @@ abstract class Client implements ClientInterface
     private $client_secret;
     private $base_url;
 
-    public function __construct(string $client_id, string $client_secret, string $base_url)
+    public function __construct(string $client_id, #[SensitiveParameter] string $client_secret, string $base_url)
     {
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;

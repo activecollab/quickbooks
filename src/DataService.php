@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use League\OAuth1\Client\Credentials\TokenCredentials;
 use League\OAuth1\Client\Credentials\ClientCredentials;
 use DateTime;
+use SensitiveParameter;
 
 class DataService
 {
@@ -40,7 +41,7 @@ class DataService
      * @param string $access_token_secret
      * @param string $realmId
      */
-    public function __construct($consumer_key, $consumer_key_secret, $access_token, $access_token_secret, $realmId)
+    public function __construct($consumer_key, #[SensitiveParameter] $consumer_key_secret, #[SensitiveParameter] $access_token, #[SensitiveParameter] $access_token_secret, $realmId)
     {
         $this->consumer_key = $consumer_key;
         $this->consumer_key_secret = $consumer_key_secret;

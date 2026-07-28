@@ -12,6 +12,7 @@ namespace ActiveCollab\Quickbooks\DataService;
 
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
 use QuickBooksOnline\API\DataService\DataService;
+use SensitiveParameter;
 
 class OAuth2Client extends Client implements OAuth2ClientInterface
 {
@@ -20,7 +21,7 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
 
     public function __construct(
         string $client_id,
-        string $client_secret,
+        #[SensitiveParameter] string $client_secret,
         string $redirect_uri,
         string $base_url,
         string $state
@@ -57,7 +58,7 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
         return $this->getDataService()->getOAuth2LoginHelper()->getAuthorizationCodeURL();
     }
 
-    public function getAuthorizationToken(string $authorization_code, string $realm_id): OAuth2AccessToken
+    public function getAuthorizationToken(#[SensitiveParameter] string $authorization_code, string $realm_id): OAuth2AccessToken
     {
         return $this->getDataService()->getOAuth2LoginHelper()->exchangeAuthorizationCodeForToken(
             $authorization_code,
@@ -65,21 +66,21 @@ class OAuth2Client extends Client implements OAuth2ClientInterface
         );
     }
 
-    public function refreshAccessToken(string $refresh_token): OAuth2AccessToken
+    public function refreshAccessToken(#[SensitiveParameter] string $refresh_token): OAuth2AccessToken
     {
         return $this->getDataService()->getOAuth2LoginHelper()->refreshAccessTokenWithRefreshToken($refresh_token);
     }
 
-    public function revokeAccessToken(string $access_token): bool
+    public function revokeAccessToken(#[SensitiveParameter] string $access_token): bool
     {
         return $this->getDataService()->getOAuth2LoginHelper()->revokeToken($access_token);
     }
 
     public function migrateOAuth1ToOAuth2(
         string $consumer_key,
-        string $consumer_secret,
-        string $access_token,
-        string $access_token_secret,
+        #[SensitiveParameter] string $consumer_secret,
+        #[SensitiveParameter] string $access_token,
+        #[SensitiveParameter] string $access_token_secret,
         string $redirect_uri,
         string $environment
     ): OAuth2AccessToken
