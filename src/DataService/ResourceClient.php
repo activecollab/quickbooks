@@ -22,6 +22,8 @@ use Throwable;
 
 class ResourceClient extends Client implements ResourceClientInterface
 {
+    public const QBO_MINOR_VERSION = '75';
+
     private $access_token;
     private $refresh_token;
     private $realm_id;
@@ -76,6 +78,8 @@ class ResourceClient extends Client implements ResourceClientInterface
                     'baseUrl' => $this->getBaseUrl(),
                 ]
             );
+
+            $this->data_service->setMinorVersion(self::QBO_MINOR_VERSION);
         }
 
         return $this->data_service;

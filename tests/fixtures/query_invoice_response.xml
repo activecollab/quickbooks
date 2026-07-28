@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<IntuitResponse xmlns="http://schema.intuit.com/finance/v3" time="2026-07-28T09:20:00.000-07:00">
+  <QueryResponse startPosition="1" maxResults="2" totalCount="2">
+    <Invoice domain="QBO" sparse="false">
+      <Id>130</Id>
+      <SyncToken>0</SyncToken>
+      <MetaData>
+        <CreateTime>2026-07-01T08:15:00-07:00</CreateTime>
+        <LastUpdatedTime>2026-07-01T08:15:00-07:00</LastUpdatedTime>
+      </MetaData>
+      <DocNumber>1070</DocNumber>
+      <TxnDate>2026-07-01</TxnDate>
+      <CurrencyRef name="United States Dollar">USD</CurrencyRef>
+      <AllowOnlineAffirmPayment>true</AllowOnlineAffirmPayment>
+      <Line>
+        <Id>1</Id>
+        <LineNum>1</LineNum>
+        <Description>Consulting</Description>
+        <Amount>150.00</Amount>
+        <DetailType>SalesItemLineDetail</DetailType>
+        <SalesItemLineDetail>
+          <ItemRef name="Services">1</ItemRef>
+          <UnitPrice>150</UnitPrice>
+          <Qty>1</Qty>
+        </SalesItemLineDetail>
+      </Line>
+      <CustomerRef name="Amy's Bird Sanctuary">1</CustomerRef>
+      <DueDate>2026-07-31</DueDate>
+      <TotalAmt>150.00</TotalAmt>
+      <Balance>150.00</Balance>
+    </Invoice>
+    <Invoice domain="QBO" sparse="false">
+      <Id>131</Id>
+      <SyncToken>0</SyncToken>
+      <MetaData>
+        <CreateTime>2026-07-02T10:05:00-07:00</CreateTime>
+        <LastUpdatedTime>2026-07-02T10:05:00-07:00</LastUpdatedTime>
+      </MetaData>
+      <DocNumber>1071</DocNumber>
+      <TxnDate>2026-07-02</TxnDate>
+      <CurrencyRef name="United States Dollar">USD</CurrencyRef>
+      <Line>
+        <Id>1</Id>
+        <LineNum>1</LineNum>
+        <Description>Design work</Description>
+        <Amount>320.00</Amount>
+        <DetailType>SalesItemLineDetail</DetailType>
+        <SalesItemLineDetail>
+          <ItemRef name="Services">1</ItemRef>
+          <UnitPrice>320</UnitPrice>
+          <Qty>1</Qty>
+        </SalesItemLineDetail>
+      </Line>
+      <CustomerRef name="Bill's Windsurf Shop">2</CustomerRef>
+      <DueDate>2026-08-01</DueDate>
+      <TotalAmt>320.00</TotalAmt>
+      <Balance>320.00</Balance>
+    </Invoice>
+  </QueryResponse>
+</IntuitResponse>

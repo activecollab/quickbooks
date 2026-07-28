@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cda6df0dacff369d3c9bbc6160dc6ced",
+    "content-hash": "0ad4d7a10d5a523acfd206cd820f4aa1",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -575,22 +575,23 @@
         },
         {
             "name": "quickbooks/v3-php-sdk",
-            "version": "v6.1.2",
+            "version": "v6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/intuit/QuickBooks-V3-PHP-SDK.git",
-                "reference": "a4039a8257633ed1481dfe1e50a7881016fa0b1d"
+                "reference": "5bb480b505726d9f7b89ff0747b9acc629236a77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/a4039a8257633ed1481dfe1e50a7881016fa0b1d",
-                "reference": "a4039a8257633ed1481dfe1e50a7881016fa0b1d",
+                "url": "https://api.github.com/repos/intuit/QuickBooks-V3-PHP-SDK/zipball/5bb480b505726d9f7b89ff0747b9acc629236a77",
+                "reference": "5bb480b505726d9f7b89ff0747b9acc629236a77",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-mbstring": "*",
-                "php": ">=5.6.0"
+                "guzzlehttp/guzzle": "^7.9",
+                "php": ">=7.2.5"
             },
             "require-dev": {
                 "php-mock/php-mock": "^2.3",
@@ -628,9 +629,9 @@
             ],
             "support": {
                 "issues": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/issues",
-                "source": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/tree/v6.1.2"
+                "source": "https://github.com/intuit/QuickBooks-V3-PHP-SDK/tree/v6.3.1"
             },
-            "time": "2023-08-02T04:48:35+00:00"
+            "time": "2026-07-17T10:55:28+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
