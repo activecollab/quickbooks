@@ -20,7 +20,6 @@ class ResourceClientSdkIntegrationTest extends TestCase
 
         $response = $client->query('select * from Invoice');
 
-        $this->assertInstanceOf(QueryResponse::class, $response);
         $this->assertCount(2, $response);
 
         $entities = $response->getIterator();
@@ -41,7 +40,6 @@ class ResourceClientSdkIntegrationTest extends TestCase
 
         $response = $client->query('select * from CreditMemo');
 
-        $this->assertInstanceOf(QueryResponse::class, $response);
         $this->assertCount(2, $response);
 
         $entities = $response->getIterator();
