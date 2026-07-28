@@ -1,6 +1,4 @@
-#Quickbooks
-
-[![Build Status](https://travis-ci.org/activecollab/quickbooks.svg?branch=master)](https://travis-ci.org/activecollab/quickbooks)
+# Quickbooks
 
 ## Usage
 
