@@ -17,12 +17,9 @@ use DateTime;
 interface ResourceClientInterface extends ClientInterface
 {
     public function setEntity(string $entity): ResourceClientInterface;
-
+    public function logRawResponses(bool $enable = true, ?string $dir = null): ResourceClientInterface;
     public function query(string $query = null): QueryResponse;
-
     public function cdc(array $entities, DateTime $changed_since): array;
-
     public function read(int $id): Entity;
-
     public function create(array $payload): Entity;
 }
